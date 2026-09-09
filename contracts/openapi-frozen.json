@@ -1,0 +1,124 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CPI Food Rescue Platform",
+    "description": "Algorithmic Micro-Donation & Food-Waste Routing Service",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/api/v1/analytics/overview": {
+      "get": {
+        "summary": "Get Analytics Overview",
+        "operationId": "get_analytics_overview",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "total_donations": {"type": "integer"},
+                        "total_food_rescued_kg": {"type": "number"},
+                        "active_donations": {"type": "integer"},
+                        "active_deliveries": {"type": "integer"},
+                        "registered_ngos": {"type": "integer"},
+                        "registered_donors": {"type": "integer"},
+                        "available_drivers": {"type": "integer"}
+                      },
+                      "required": ["total_donations", "total_food_rescued_kg", "active_donations", "active_deliveries", "registered_ngos", "registered_donors", "available_drivers"]
+                    },
+                    "meta": {
+                      "type": "object",
+                      "properties": {
+                        "request_id": {"type": "string"}
+                      },
+                      "required": ["request_id"]
+                    }
+                  },
+                  "required": ["data", "meta"]
+                }
+              }
+            }
+          }
+        },
+        "security": [{"HTTPBearer": []}]
+      }
+    },
+    "/api/v1/analytics/food": {
+      "get": {
+        "summary": "Get Food Metrics",
+        "operationId": "get_food_metrics",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "kg_diverted": {"type": "number"},
+                        "meals_recovered": {"type": "integer"}
+                      },
+                      "required": ["kg_diverted", "meals_recovered"]
+                    },
+                    "meta": {"type": "object"}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [{"HTTPBearer": []}]
+      }
+    },
+    "/admin/ngos/{ngo_id}/verify": {
+      "patch": {
+        "summary": "Verify NGO",
+        "operationId": "verify_ngo",
+        "parameters": [
+          {
+            "name": "ngo_id",
+            "in": "path",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {"type": "string", "enum": ["APPROVED", "REJECTED"]},
+                  "reason": {"type": "string"}
+                },
+                "required": ["status", "reason"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response"
+          }
+        },
+        "security": [{"HTTPBearer": []}]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "HTTPBearer": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
