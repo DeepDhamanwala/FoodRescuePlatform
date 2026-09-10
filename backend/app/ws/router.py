@@ -36,8 +36,13 @@ def _authenticate(token: str | None) -> str | None:
 
 async def _serve(websocket: WebSocket, channel: str, token: str | None) -> None:
     if _authenticate(token) is None:
+        # A custom close code can only be delivered over an accepted
+        # connection — closing before accept() has no WS handshake to carry
+        # the code over, so ASGI servers just reject the upgrade with a
+        # generic HTTP 403 and the 4401 is lost. Accept first, then close.
         # 4401 mirrors the REST 401 for unauthenticated access, using the
         # custom WS close-code range (4000-4999) reserved for application use.
+        await websocket.accept()
         await websocket.close(code=4401)
         return
 
