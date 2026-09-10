@@ -50,6 +50,13 @@ async def register(body: RegisterRequest, db: Annotated[AsyncSession, Depends(ge
         created_at=datetime.utcnow(),
     )
     db.add(user)
+    # Flush now so the users row exists before role-specific child rows are
+    # added below — without a declared relationship(), the unit-of-work has
+    # no dependency graph to order same-commit inserts by FK, and falls back
+    # to alphabetical table order (donors/ngo_food_categories < users),
+    # which violates the FK on Postgres. SQLite doesn't enforce FKs by
+    # default, so this was invisible there.
+    await db.flush()
 
     verification_status = "N/A"
 
