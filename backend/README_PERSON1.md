@@ -194,6 +194,7 @@ Verified this session: both 001 and 002 apply cleanly via `alembic upgrade head`
 - `POST /deliveries/{id}/pickup` and `/deliver`: success path, 403 for a driver not assigned to that delivery, 400 for a missing `Idempotency-Key`, and a same-key replay confirmed to return the identical cached response (not reprocessed — same `actual_pickup_time` and `meta.request_id`)
 - `POST /handover/{id}`: 400 for missing key, full-quantity handover → donation/delivery status `DELIVERED`, partial-quantity handover → `PARTIALLY_DELIVERED`
 - `POST /drivers/location`: one successful call, confirmed it broadcasts to both `/ws/drivers` and `/ws/deliveries`
+- `GET /ngos/{id}`, `PATCH /ngos/{id}/demand`, `PATCH /ngos/{id}/capacity`: confirmed values actually persist via a `GET /ngos/{id}` read-back afterward (not just a 200 response) — the demand entry appears with the correct category/quantity/priority, `available_capacity_kg` updates to the new value; also confirmed the `available_capacity_kg > storage_capacity_kg` guard rejects with 400 and leaves the prior value in place
 - `GET /health`, `GET /ready`
 - WebSocket: valid-token connect accepted on `/ws/donations`; missing/invalid-token connect closes with code 4401; a connected client receives the `donation.created` broadcast after `POST /donations`, and a client on `/ws/deliveries` receives `delivery.location_update` after `POST /drivers/location`
 
@@ -203,7 +204,7 @@ Verified this session: both 001 and 002 apply cleanly via `alembic upgrade head`
 - `GET /donations` (list, with `status` filter and pagination)
 - `PATCH /donations/{id}` (the matching-engine write path) and `PATCH /donations/{id}/cancel`
 - `POST /donations/{id}/photos`
-- All of `app/ngos/router.py` — `GET/PATCH /ngos/{id}`, `PATCH .../demand`, `PATCH .../capacity`, `GET .../incoming`
+- `PATCH /ngos/{id}` (profile fields — address, hours, accepted categories) and `GET /ngos/{id}/incoming`
 - `GET /drivers` (pool list)
 - `GET /deliveries/{id}` (the plain fetch — only the pickup/deliver response bodies were checked, not this endpoint directly)
 - The 429 rate-limit branch of `POST /drivers/location` (only one call was made, well under the limit)

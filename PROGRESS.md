@@ -352,7 +352,7 @@ Tested end-to-end against real Postgres 16 + Redis 7 (docker-compose, not SQLite
 ### Known simplifications (flagged, not blockers)
 
 - `POST /donations/{id}/photos` writes an audit log entry with a placeholder storage path — no real object storage (S3/local disk) wired up yet
-- `PATCH /ngos/{id}/demand` currently appends a new NGODemand row rather than replacing the existing one per food_category — fine for now since `GET /ngos/{id}` reads the most recent by category, but will need real upsert semantics eventually
+- `PATCH /ngos/{id}/demand` currently appends a new NGODemand row rather than replacing the existing one per food_category — `GET /ngos/{id}` returns every demand row ever inserted (not deduplicated per category), so repeated updates for the same category accumulate rather than the latest replacing older ones; will need real upsert semantics eventually
 
 ### For Person 6 (integration)
 
