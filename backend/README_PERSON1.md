@@ -197,15 +197,12 @@ Verified this session: both 001 and 002 apply cleanly via `alembic upgrade head`
 - `GET /ngos/{id}`, `PATCH /ngos/{id}/demand`, `PATCH /ngos/{id}/capacity`: confirmed values actually persist via a `GET /ngos/{id}` read-back afterward (not just a 200 response) — the demand entry appears with the correct category/quantity/priority, `available_capacity_kg` updates to the new value; also confirmed the `available_capacity_kg > storage_capacity_kg` guard rejects with 400 and leaves the prior value in place
 - `GET /health`, `GET /ready`
 - WebSocket: valid-token connect accepted on `/ws/donations`; missing/invalid-token connect closes with code 4401; a connected client receives the `donation.created` broadcast after `POST /donations`, and a client on `/ws/deliveries` receives `delivery.location_update` after `POST /drivers/location`
+- `GET /donations` (list, own donation appears), `PATCH /donations/{id}` (status write), `PATCH /donations/{id}/cancel`, `GET /drivers` (pool list), `PATCH /ngos/{id}` (profile update persists), `GET /ngos/{id}/incoming`
 
 **Implemented but not exercised this session** — no reason to believe they're broken, just not run:
 
 - `POST /auth/refresh`
-- `GET /donations` (list, with `status` filter and pagination)
-- `PATCH /donations/{id}` (the matching-engine write path) and `PATCH /donations/{id}/cancel`
 - `POST /donations/{id}/photos`
-- `PATCH /ngos/{id}` (profile fields — address, hours, accepted categories) and `GET /ngos/{id}/incoming`
-- `GET /drivers` (pool list)
 - `GET /deliveries/{id}` (the plain fetch — only the pickup/deliver response bodies were checked, not this endpoint directly)
 - The 429 rate-limit branch of `POST /drivers/location` (only one call was made, well under the limit)
 - `/ws/drivers` as a direct connection target (the event it's meant to carry was confirmed arriving on `/ws/deliveries`, since `drivers/router.py` broadcasts to both, but nothing connected to `/ws/drivers` itself this session)
