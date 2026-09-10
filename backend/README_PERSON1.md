@@ -197,7 +197,7 @@ Verified this session: both 001 and 002 apply cleanly via `alembic upgrade head`
 - `GET /ngos/{id}`, `PATCH /ngos/{id}/demand`, `PATCH /ngos/{id}/capacity`: confirmed values actually persist via a `GET /ngos/{id}` read-back afterward (not just a 200 response) — the demand entry appears with the correct category/quantity/priority, `available_capacity_kg` updates to the new value; also confirmed the `available_capacity_kg > storage_capacity_kg` guard rejects with 400 and leaves the prior value in place
 - `GET /health`, `GET /ready`
 - WebSocket: valid-token connect accepted on `/ws/donations`; missing/invalid-token connect closes with code 4401; a connected client receives the `donation.created` broadcast after `POST /donations`, and a client on `/ws/deliveries` receives `delivery.location_update` after `POST /drivers/location`
-- `GET /donations` (list, own donation appears), `PATCH /donations/{id}` (status write), `PATCH /donations/{id}/cancel`, `GET /drivers` (pool list), `PATCH /ngos/{id}` (profile update persists), `GET /ngos/{id}/incoming`
+- `GET /donations` (list, own donation appears), `PATCH /donations/{id}` (status write), `PATCH /donations/{id}/cancel`, `GET /drivers` (pool list), `PATCH /ngos/{id}` (profile update accepted, per its 200 response — not independently re-read via a separate GET the way capacity/demand was), `GET /ngos/{id}/incoming`
 
 **Implemented but not exercised this session** — no reason to believe they're broken, just not run:
 
