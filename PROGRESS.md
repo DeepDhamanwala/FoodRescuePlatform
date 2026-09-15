@@ -360,3 +360,46 @@ Tested end-to-end against real Postgres 16 + Redis 7 (docker-compose, not SQLite
 - Seed an initial admin: `python -m app.scripts.seed_admin --email admin@cpi.local --password <yours>`
 - `NGO.verification_status` (read via `GET /ngos/{id}`, written via your `PATCH /admin/ngos/{id}/verify`) is the same field Person 4's matching engine should filter on
 - WebSocket broker is live — if your admin dashboard wants real-time NGO verification updates, emit them via `manager.broadcast("donations", {...})` (or add a new channel) from your verify endpoint the same way donations/router.py does
+
+## Person 2 Module — Donor Application
+
+**Branch:** `feature/person2-donor`
+
+### Status
+The Person 2 donor frontend implementation is complete and ready for integration with the existing backend.
+
+### Completed Items
+
+**Donor UI**
+- Donor dashboard for viewing donation information and lifecycle status
+- Donation creation form
+- Donation details page
+- Donation status/lifecycle display
+- Protected donor routes
+
+**Donation Functionality**
+- Create donation using the existing Person 1 donation API
+- Donation cancellation before pickup
+- Donation photo upload
+- Support for the donation fields defined in the API contract, including food name, category, quantity, preparation/availability/expiry times, pickup location, special handling, and food safety information
+
+**Validation & Frontend Libraries**
+- React Hook Form for form handling
+- Zod validation with `@hookform/resolvers`
+- Leaflet + React Leaflet for map functionality
+
+**Map & Live Tracking**
+- Donor → driver → NGO map visualization
+- Driver location/live tracking integration
+- Live ETA display
+- WebSocket integration using the existing backend WebSocket architecture
+
+**Mock Data & Testing**
+- Added donor mock API/data fixtures for frontend development
+- Added donor application/component tests
+- Updated frontend test setup/types as required
+
+**Integration**
+- Integrated the donor frontend with the existing authentication/API structure
+- Used the existing Person 1 donation endpoints rather than implementing a separate backend
+- Integrated with the existing donation and delivery WebSocket events
